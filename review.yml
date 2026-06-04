@@ -1,0 +1,49 @@
+---
+name: University of Campinas
+description: University of Campinas public developer/API footprint review for APIs.json cataloging.
+url: https://raw.githubusercontent.com/api-evangelist/unicamp/refs/heads/main/review.yml
+created: '2026-06-03'
+modified: '2026-06-03'
+reviews:
+  - date: '2026-06-03'
+    rating: 2
+    summary: >-
+      Unicamp has no unified public developer portal. The one clearly public,
+      documented, machine-readable API is REDU, the institutional research data
+      repository running Dataverse 6.0, which exposes a Native/Search REST API
+      and an OAI-PMH endpoint — both verified live (version 6.0, 1,957 datasets,
+      OAI Identify responds). The EDAT data office (dados.unicamp.br) delivers
+      dashboards/panels through gated access with no documented API. The
+      institutional repository (repositorio.unicamp.br, Sophia) did not expose a
+      resolvable public OAI endpoint at the probed paths. No official Unicamp
+      GitHub organization was confirmed (the github.com/unicamp account is an
+      empty personal user; research-group orgs like unicamp-dl exist but are not
+      institutional). No endpoints were fabricated.
+    endpoints:
+      - url: https://redu.unicamp.br/api/info/version
+        status: 200
+        note: Dataverse version endpoint returns {"version":"6.0"}.
+      - url: https://redu.unicamp.br/api/search?q=*&type=dataset&per_page=1
+        status: 200
+        note: Search API returns total_count 1957 datasets.
+      - url: https://redu.unicamp.br/oai?verb=Identify
+        status: 200
+        note: OAI-PMH 2.0 Identify responds with repository name and baseURL.
+      - url: https://dados.unicamp.br/
+        status: 200
+        note: EDAT data office; dashboards/panels, gated, no documented API.
+      - url: https://catalogo.dados.unicamp.br
+        status: 200
+        note: Panel catalog; no public API documentation.
+      - url: https://repositorio.unicamp.br/
+        status: 200
+        note: Institutional repository (Sophia); no resolvable public OAI at probed paths.
+      - url: https://repositorio.unicamp.br/oai?verb=Identify
+        status: 403
+        note: OAI verb path returned 403; not openly accessible.
+      - url: https://www.bibliotecadigital.unicamp.br/oai/request?verb=Identify
+        status: 404
+        note: No OAI endpoint at this path.
+      - url: https://www.unicamp.br/
+        status: 200
+        note: Official institutional website.

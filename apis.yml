@@ -1,0 +1,76 @@
+---
+aid: unicamp
+name: University of Campinas
+description: >-
+  The University of Campinas (Universidade Estadual de Campinas, Unicamp) is a
+  public research university in Campinas, São Paulo, Brazil, ranked #232 in the
+  QS World University Rankings 2025. Its most visible public, machine-readable
+  API footprint is REDU, the Unicamp Research Data Repository, which runs on the
+  open-source Dataverse 6.0 platform and exposes a documented Native/Search API
+  and an OAI-PMH metadata endpoint. Institutional data products are otherwise
+  delivered through dashboards and gated portals (EDAT / dados.unicamp.br) and
+  library discovery systems rather than a unified public developer portal.
+type: Index
+position: Consumer
+access: 3rd-Party
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+url: https://raw.githubusercontent.com/api-evangelist/unicamp/refs/heads/main/apis.yml
+tags:
+  - Education
+  - Higher Education
+  - University
+  - Research Data
+  - Open Data
+  - Brazil
+created: '2026-06-03'
+modified: '2026-06-03'
+specificationVersion: '0.19'
+apis:
+  - aid: unicamp:redu-dataverse-api
+    name: REDU Dataverse Native & Search API
+    description: >-
+      REDU (Repositório de Dados de Pesquisa da Unicamp) is Unicamp's
+      institutional research data repository running on Dataverse 6.0. It
+      exposes the standard Dataverse REST API, including a public Search API
+      (/api/search) and Native API endpoints for datasets, files, and metadata.
+      Confirmed live: /api/info/version returns version 6.0 and the Search API
+      returns 1,957 datasets. Datasets are minted with DataCite DOIs
+      (doi:10.25824/redu/...).
+    humanURL: https://redu.unicamp.br/
+    baseURL: https://redu.unicamp.br/api
+    tags: [ Research Data, Dataverse, Open Data, Datasets, Repository ]
+    properties:
+      - type: Documentation
+        url: https://guides.dataverse.org/en/6.0/api/
+      - type: Documentation
+        url: https://redu.unicamp.br/
+  - aid: unicamp:redu-oai-pmh
+    name: REDU OAI-PMH Metadata Endpoint
+    description: >-
+      OAI-PMH 2.0 metadata harvesting endpoint for REDU, the Unicamp Research
+      Data Repository. Confirmed live: verb=Identify returns the repository
+      "Repositório de Dados de Pesquisa da Unicamp Dataverse OAI Archive" with
+      baseURL https://redu.unicamp.br/oai. Supports standard OAI-PMH verbs for
+      harvesting dataset metadata.
+    humanURL: https://redu.unicamp.br/
+    baseURL: https://redu.unicamp.br/oai
+    tags: [ OAI-PMH, Metadata Harvesting, Research Data, Repository ]
+    properties:
+      - type: Documentation
+        url: https://guides.dataverse.org/en/6.0/api/oai.html
+common:
+  - type: Website
+    url: https://www.unicamp.br/
+  - type: LinkedIn
+    url: https://br.linkedin.com/school/universidade-estadual-de-campinas/
+  - type: Plans
+    url: plans/unicamp-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/unicamp-rate-limits.yml
+  - type: FinOps
+    url: finops/unicamp-finops.yml
+  - type: Review
+    url: review.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
