@@ -1,0 +1,49 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "unicamp": "https://www.unicamp.br/ns#",
+    "name": "schema:name",
+    "url": "schema:url",
+    "description": "schema:description",
+    "sameAs": "schema:sameAs",
+    "identifier": "schema:identifier",
+    "Organization": "schema:CollegeOrUniversity",
+    "Dataset": "schema:Dataset",
+    "doi": {
+      "@id": "schema:identifier",
+      "@type": "@id"
+    },
+    "globalId": "schema:identifier",
+    "publisher": {
+      "@id": "schema:publisher",
+      "@type": "@id"
+    },
+    "datePublished": {
+      "@id": "schema:datePublished",
+      "@type": "schema:Date"
+    },
+    "keywords": "schema:keywords",
+    "distribution": "schema:distribution",
+    "contentUrl": {
+      "@id": "schema:contentUrl",
+      "@type": "@id"
+    }
+  },
+  "@type": "Organization",
+  "@id": "https://www.unicamp.br/",
+  "name": "University of Campinas",
+  "url": "https://www.unicamp.br/",
+  "description": "Universidade Estadual de Campinas (Unicamp), a public research university in Campinas, Sao Paulo, Brazil.",
+  "sameAs": [
+    "https://br.linkedin.com/school/universidade-estadual-de-campinas/",
+    "https://en.wikipedia.org/wiki/University_of_Campinas",
+    "https://www.wikidata.org/wiki/Q835960"
+  ],
+  "unicamp:dataRepository": {
+    "@type": "Dataset",
+    "name": "REDU - Repositorio de Dados de Pesquisa da Unicamp",
+    "url": "https://redu.unicamp.br/",
+    "description": "Unicamp research data repository running on Dataverse 6.0, exposing a Search/Native REST API and an OAI-PMH metadata endpoint. Datasets are minted with DataCite DOIs (doi:10.25824/redu/...)."
+  }
+}
