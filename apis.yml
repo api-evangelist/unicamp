@@ -59,6 +59,8 @@ apis:
       - type: Documentation
         url: https://guides.dataverse.org/en/6.0/api/oai.html
 common:
+  - type: DomainSecurity
+    url: security/unicamp-domain-security.yml
   - type: Website
     url: https://www.unicamp.br/
   - type: LinkedIn
