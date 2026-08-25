@@ -5,10 +5,10 @@
       "source": "https://www.jornal.unicamp.br/",
       "feed_url": "https://www.unicamp.br/feed/",
       "title": "Jornal da Unicamp",
-      "saved": 8,
+      "saved": 10,
       "method": "feed"
     }
   ],
-  "post_count": 60,
-  "fetched": "2026-08-15T12:11:08Z"
+  "post_count": 70,
+  "fetched": "2026-08-22T20:08:02Z"
 }
