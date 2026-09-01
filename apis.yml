@@ -1,21 +1,29 @@
 ---
 aid: unicamp
 name: University of Campinas
+x-type: university
+x-category: Public Research University
 description: >-
-  The University of Campinas (Universidade Estadual de Campinas, Unicamp) is a
-  public research university in Campinas, São Paulo, Brazil, ranked #232 in the
-  QS World University Rankings 2025. Its most visible public, machine-readable
-  API footprint is REDU, the Unicamp Research Data Repository, which runs on the
-  open-source Dataverse 6.0 platform and exposes a documented Native/Search API
-  and an OAI-PMH metadata endpoint. Institutional data products are otherwise
-  delivered through dashboards and gated portals (EDAT / dados.unicamp.br) and
-  library discovery systems rather than a unified public developer portal.
+  The University of Campinas (Universidade Estadual de Campinas, Unicamp) is a public research
+  university in Campinas, Sao Paulo, Brazil, and one of Latin America's largest producers of
+  research output. It publishes no central developer portal and no public API documentation, but
+  it does operate more machine-readable surface than that absence suggests, and all of it sits on
+  its own registrable domain: REDU, a self-hosted Dataverse 6.2 research data repository with a
+  live Native/Search API and an OAI-PMH endpoint over 2,149 datasets; the EDAT data platform,
+  whose Kong gateway at api.dados.unicamp.br serves at least one publicly callable JSON endpoint
+  and gates the rest behind Unicamp's own Keycloak realm with full OIDC discovery; per-journal
+  OAI-PMH across the SBU journal portal; and a Shibboleth identity provider registered in CAFe,
+  Brazil's academic identity federation. Two further gateways are live but closed - the registrar
+  API at api.dac.unicamp.br (403 on every path) and an institutional Sensedia gateway at
+  api.unicamp.br (routing but no public route). Unicamp is also a DataCite provider in its own
+  right and a Crossref member. Nothing here is documented for third-party developers; the
+  contracts in this repo were reconstructed by probe, not published by the university.
 type: Index
 deliveryModel:
   model: saas
   open_source: false
   commercial: true
-  callable_host: false
+  callable_host: true
   label: Hosted service · you call their endpoint
   confidence: medium
   source:
@@ -42,45 +50,229 @@ tags:
   - Education
   - Higher Education
   - University
+  - Public Research University
+  - Brazil
+  - Latin America
   - Research Data
   - Open Data
-  - Brazil
+  - Research Repository
+  - Identity Federation
+  - OAI-PMH
+  - Dataverse
+  - Course Catalog
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 specificationVersion: '0.23'
 apis:
   - aid: unicamp:redu-dataverse-api
     name: REDU Dataverse Native & Search API
+    x-operator: institution
     description: >-
-      REDU (Repositório de Dados de Pesquisa da Unicamp) is Unicamp's
-      institutional research data repository running on Dataverse 6.0. It
-      exposes the standard Dataverse REST API, including a public Search API
-      (/api/search) and Native API endpoints for datasets, files, and metadata.
-      Confirmed live: /api/info/version returns version 6.0 and the Search API
-      returns 1,957 datasets. Datasets are minted with DataCite DOIs
-      (doi:10.25824/redu/...).
+      REDU (Repositorio de Dados de Pesquisa da Unicamp) is Unicamp's institutional research data
+      repository, self-hosted on the open-source Dataverse platform at redu.unicamp.br - a
+      Unicamp-owned host, not a vendor tenancy (redu.unicamp.br CNAMEs to
+      redu-app.sbu.unicamp.br, the university library system). It exposes the standard Dataverse
+      REST API. Verified live 2026-09-01: /api/info/version returns 6.2 (build 1603-a218417),
+      /api/search returns total_count 2,149 datasets, /api/info/metrics/datasets returns 2,149.
+      Datasets are minted with DataCite DOIs under doi:10.25824/redu/. The API CONTRACT is
+      Dataverse's, shared by every Dataverse deployment worldwide, so no OpenAPI is saved under
+      Unicamp - the deployment is theirs, the interface design is not.
     humanURL: https://redu.unicamp.br/
     baseURL: https://redu.unicamp.br/api
     tags: [ Research Data, Dataverse, Open Data, Datasets, Repository ]
     properties:
       - type: Documentation
-        url: https://guides.dataverse.org/en/6.0/api/
+        url: https://guides.dataverse.org/en/6.2/api/native-api.html
       - type: Documentation
+        url: https://guides.dataverse.org/en/6.2/api/search.html
+      - type: Website
         url: https://redu.unicamp.br/
   - aid: unicamp:redu-oai-pmh
     name: REDU OAI-PMH Metadata Endpoint
+    x-operator: institution
     description: >-
-      OAI-PMH 2.0 metadata harvesting endpoint for REDU, the Unicamp Research
-      Data Repository. Confirmed live: verb=Identify returns the repository
-      "Repositório de Dados de Pesquisa da Unicamp Dataverse OAI Archive" with
-      baseURL https://redu.unicamp.br/oai. Supports standard OAI-PMH verbs for
-      harvesting dataset metadata.
+      OAI-PMH 2.0 metadata harvesting endpoint for REDU, on Unicamp's own host. Verified live
+      2026-09-01: verb=Identify returns 200 for repository "Repositorio de Dados de Pesquisa da
+      Unicamp Dataverse OAI Archive" with baseURL https://redu.unicamp.br/oai. OAI-PMH is a named
+      standard in the Kin Score education regime and this is one of two independent Unicamp
+      endpoints serving it.
     humanURL: https://redu.unicamp.br/
     baseURL: https://redu.unicamp.br/oai
     tags: [ OAI-PMH, Metadata Harvesting, Research Data, Repository ]
     properties:
       - type: Documentation
-        url: https://guides.dataverse.org/en/6.0/api/oai.html
+        url: https://guides.dataverse.org/en/6.2/admin/harvestserver.html
+      - type: Conformance
+        url: conformance/unicamp-conformance.yml
+  - aid: unicamp:edat-data-api
+    name: EDAT Data Platform API
+    x-operator: institution
+    description: >-
+      API gateway (Kong) for Unicamp's Escritorio de Dados e Apoio a Tomada de Decisao (EDAT),
+      the university's data office. It backs catalogo.dados.unicamp.br and
+      apoio.dados.unicamp.br. Verified live 2026-09-01: GET /superset/public/papeis returns 200
+      application/json with 364 role objects (55,697 bytes) and requires no credential; GET
+      /suporte/public/sistemas returns 401 {"message":"Unauthorized"}; unrouted paths return the
+      Kong "no Route matched with those values" envelope. Unicamp publishes no OpenAPI for it -
+      the definition in this repo was reconstructed from those probes and from the route names in
+      the catalog front-end bundle, and is marked as ours.
+    humanURL: https://catalogo.dados.unicamp.br/
+    baseURL: https://api.dados.unicamp.br
+    tags: [ Open Data, Institutional Data, Gateway, Analytics ]
+    properties:
+      - type: OpenAPI
+        url: openapi/unicamp-edat-data-api-openapi.yml
+      - type: Authentication
+        url: authentication/unicamp-edat-oidc-authentication.yml
+      - type: Scopes
+        url: scopes/unicamp-edat-oidc-scopes.yml
+      - type: Website
+        url: https://www.dados.unicamp.br/
+  - aid: unicamp:edat-keycloak-oidc
+    name: EDAT Keycloak OpenID Connect Provider
+    x-operator: institution
+    description: >-
+      Unicamp-operated Keycloak authorization server (realm `edat`) that issues the credentials
+      for the EDAT data platform. Verified live 2026-09-01: the OIDC discovery document at
+      /realms/edat/.well-known/openid-configuration returns 200 (6,717 bytes) with jwks_uri, PKCE
+      S256, device authorization, dynamic client registration, and Unicamp-specific scopes
+      (uecEmailAccount, department_number, minio-authorization). This is a genuine
+      institution-authored machine-readable contract - the realm configuration is Unicamp's own.
+    humanURL: https://www.dados.unicamp.br/
+    baseURL: https://seguranca.dados.unicamp.br/realms/edat
+    tags: [ Identity, OpenID Connect, OAuth 2.0, Keycloak ]
+    properties:
+      - type: Authentication
+        url: authentication/unicamp-edat-oidc-authentication.yml
+      - type: Scopes
+        url: scopes/unicamp-edat-oidc-scopes.yml
+      - type: Discovery
+        url: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+  - aid: unicamp:cafe-shibboleth-idp
+    name: Unicamp Shibboleth Identity Provider (CAFe)
+    x-operator: federation
+    description: >-
+      Unicamp's own SAML 2.0 / Shibboleth identity provider, entityID
+      https://cafe.unicamp.br/idp/shibboleth, registered in CAFe - RNP's Brazilian academic
+      identity federation and an eduGAIN participant. The federation aggregate is shared by
+      definition; the IdP behind this entry is Unicamp's. Verified live 2026-09-01: the entity is
+      present in https://ds.cafe.rnp.br/metadata/cafe-metadata.xml (200, 3.3MB) with
+      OrganizationDisplayName "UNICAMP - Universidade Estadual de Campinas", shibmd:Scope
+      unicamp.br and contact suporte-infra@detic.unicamp.br, and the IdP self-serves its metadata
+      at https://cafe.unicamp.br/idp/shibboleth (200, SAML EntityDescriptor). Two Unicamp service
+      providers are registered in the same federation.
+    humanURL: https://www.rnp.br/servicos/servicos-por-categoria/gestao-de-identidade/cafe
+    baseURL: https://cafe.unicamp.br/idp
+    tags: [ Identity Federation, Shibboleth, SAML, eduGAIN, CAFe ]
+    properties:
+      - type: Metadata
+        url: https://cafe.unicamp.br/idp/shibboleth
+      - type: Metadata
+        url: https://ds.cafe.rnp.br/metadata/cafe-metadata.xml
+      - type: Conformance
+        url: conformance/unicamp-conformance.yml
+  - aid: unicamp:sbu-periodicos-oai
+    name: SBU Journal Portal OAI-PMH Endpoints
+    x-operator: institution
+    description: >-
+      Unicamp's library system (SBU) self-hosts the Portal de Periodicos Eletronicos Cientificos
+      on Open Journal Systems 3.4.0.9 at periodicos.sbu.unicamp.br, with a per-journal OAI-PMH
+      endpoint. Verified live 2026-09-01: .../index.php/bjos/oai?verb=Identify returns 200 and
+      verb=ListMetadataFormats returns 200. The OJS REST API (/api/v1/) exists but is closed -
+      it returns 403 api.403.unauthorized without a key. The software and its API contract are
+      PKP's; the deployment, the host and the content are Unicamp's, so no PKP spec is saved here.
+    humanURL: https://periodicos.sbu.unicamp.br/
+    baseURL: https://periodicos.sbu.unicamp.br/ojs/index.php/{journal}/oai
+    tags: [ OAI-PMH, Open Journal Systems, Scholarly Publishing, Library ]
+    properties:
+      - type: Website
+        url: https://periodicos.sbu.unicamp.br/
+      - type: Conformance
+        url: conformance/unicamp-conformance.yml
+  - aid: unicamp:dac-registrar-api
+    name: DAC Registrar API (closed)
+    x-operator: institution
+    description: >-
+      API host of the Diretoria Academica (DAC), Unicamp's registrar, which runs the course
+      catalogs, enrollment and academic records. Resolves to Unicamp-operated addresses
+      (177.220.121.139-141) and is live, but every path probed on 2026-09-01 returned 403
+      Forbidden with no documentation, no discovery route and no public registration path.
+      Recorded because the surface is real and institution-operated, not because it is usable -
+      this is the closed registrar API, and the public course catalog it backs is HTML only.
+    humanURL: https://www.dac.unicamp.br/portal/graduacao/catalogos-de-cursos
+    baseURL: https://api.dac.unicamp.br
+    tags: [ Course Catalog, Registrar, Student Information System, Closed ]
+    properties:
+      - type: Website
+        url: https://www.dac.unicamp.br/portal/
+      - type: CourseCatalog
+        url: https://www.dac.unicamp.br/portal/graduacao/catalogos-de-cursos
+  - aid: unicamp:institutional-api-gateway
+    name: Institutional API Gateway (api.unicamp.br)
+    x-operator: institution
+    description: >-
+      Unicamp's central API gateway. The hostname is Unicamp's; the gateway platform is Sensedia
+      (api.unicamp.br CNAMEs to alias.b3r06ix53m-gateway-default.sensedia.net behind an AWS
+      sa-east-1 load balancer), so the vendor tenancy is on the DELIVERY layer while the APIs
+      routed through it are the university's own. Verified live 2026-09-01: every path probed
+      returns the Sensedia routing error "Could not route request", which proves the gateway is
+      serving and that no route is exposed to unauthenticated callers. No developer portal, no
+      catalog and no documentation were found for it.
+    humanURL: https://www.unicamp.br/
+    baseURL: https://api.unicamp.br
+    tags: [ Gateway, API Management, Sensedia, Closed ]
+    properties:
+      - type: Website
+        url: https://www.unicamp.br/
+  - aid: unicamp:datacite-membership
+    name: DataCite Membership and DOI Registration
+    x-operator: registry
+    description: >-
+      Unicamp is a DataCite provider (member) in its own right, not merely a client of one.
+      Verified 2026-09-01: https://api.datacite.org/providers/unicamp returns 200 - id `unicamp`,
+      symbol UNICAMP, memberType consortium_organization, rorId https://ror.org/04wffgt70. Its
+      repository client GDCC.UNICAMP (created 2019) carries url https://redu.unicamp.br, and DOI
+      prefix 10.25824 resolves to that client. This entry records the MEMBERSHIP; DataCite's own
+      API contract belongs to DataCite and is not saved here.
+    humanURL: https://commons.datacite.org/ror.org/04wffgt70
+    baseURL: https://api.datacite.org
+    tags: [ DOI, DataCite, Persistent Identifiers, Registry Membership ]
+    properties:
+      - type: Registration
+        url: https://api.datacite.org/providers/unicamp
+      - type: Registration
+        url: https://api.datacite.org/clients/gdcc.unicamp
+      - type: Registration
+        url: https://api.datacite.org/prefixes/10.25824
+  - aid: unicamp:crossref-membership
+    name: Crossref Membership
+    x-operator: registry
+    description: >-
+      Unicamp is Crossref member 27633, "Universidade Estadual de Campinas", registering DOIs for
+      its SBU journal portal and other scholarly output. Verified 2026-09-01:
+      https://api.crossref.org/members/27633 returns 200 with 13,018 DOIs (2,723 current, 10,295
+      backfile). Membership recorded; Crossref's API contract is Crossref's.
+    humanURL: https://www.crossref.org/
+    baseURL: https://api.crossref.org/members/27633
+    tags: [ DOI, Crossref, Persistent Identifiers, Registry Membership ]
+    properties:
+      - type: Registration
+        url: https://api.crossref.org/members/27633
+  - aid: unicamp:ror-registration
+    name: ROR Organization Registration
+    x-operator: registry
+    description: >-
+      Unicamp is registered in the Research Organization Registry as https://ror.org/04wffgt70,
+      with domain unicamp.br, established 1966, and cross-references to GRID (grid.411087.b),
+      ISNI (0000 0001 0723 2494) and Crossref Funder IDs (501100006416, 501100006417). Verified
+      2026-09-01: https://api.ror.org/v2/organizations/04wffgt70 returns 200. This is the
+      identifier the DataCite provider record points back to.
+    humanURL: https://ror.org/04wffgt70
+    baseURL: https://api.ror.org/v2/organizations/04wffgt70
+    tags: [ ROR, Organization Identifiers, Registry Membership ]
+    properties:
+      - type: Registration
+        url: https://api.ror.org/v2/organizations/04wffgt70
 common:
   - type: DomainSecurity
     url: security/unicamp-domain-security.yml
@@ -96,6 +288,76 @@ common:
     url: finops/unicamp-finops.yml
   - type: Review
     url: review.yml
+  - type: OpenData
+    url: https://catalogo.dados.unicamp.br/
+  - type: OpenData
+    url: https://transparencia.unicamp.br/
+  - type: ResearchRepository
+    url: https://redu.unicamp.br/
+  - type: LibraryCatalog
+    url: https://www.sbu.unicamp.br/
+  - type: CourseCatalog
+    url: https://www.dac.unicamp.br/portal/graduacao/catalogos-de-cursos
+  - type: IdentityFederation
+    url: https://cafe.unicamp.br/idp/shibboleth
+  - type: PrivacyPolicy
+    url: https://privacidade.dados.unicamp.br/politica-de-privacidade/
+  - type: Support
+    url: https://www.dados.unicamp.br/fale-com-o-edat/
+  - type: Conformance
+    url: conformance/unicamp-conformance.yml
+x-coverage:
+  state: covered
+  reason: covered
+  detail: >-
+    Unicamp operates no public developer portal and publishes no API documentation or OpenAPI, but
+    it is not empty: four institution-operated machine-readable surfaces were probed live on
+    2026-09-01 - the REDU Dataverse API and its OAI-PMH endpoint, the EDAT Kong gateway with one
+    publicly callable JSON route, the EDAT Keycloak OIDC discovery document, and per-journal
+    OAI-PMH on the SBU journal portal - plus a Shibboleth IdP registered in the CAFe federation
+    and DataCite / Crossref / ROR registry memberships. Two further institution-operated gateways
+    are live but closed to the public (api.dac.unicamp.br returns 403 everywhere,
+    api.unicamp.br routes nothing publicly). No vendor contract is attributed to Unicamp: the
+    Dataverse and OJS interface designs belong to their projects and are deliberately not saved
+    here, and the only OpenAPI in the repo is one API Evangelist reconstructed by probe and marked
+    as such. Portuguese-language surfaces were searched directly.
+  evidence:
+    - url: https://redu.unicamp.br/api/info/version
+      status: 200
+    - url: https://redu.unicamp.br/api/search?q=*&type=dataset&per_page=1
+      status: 200
+    - url: https://redu.unicamp.br/oai?verb=Identify
+      status: 200
+    - url: https://api.dados.unicamp.br/superset/public/papeis
+      status: 200
+    - url: https://api.dados.unicamp.br/suporte/public/sistemas
+      status: 401
+    - url: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+      status: 200
+    - url: https://cafe.unicamp.br/idp/shibboleth
+      status: 200
+    - url: https://ds.cafe.rnp.br/metadata/cafe-metadata.xml
+      status: 200
+    - url: https://periodicos.sbu.unicamp.br/ojs/index.php/bjos/oai?verb=Identify
+      status: 200
+    - url: https://periodicos.sbu.unicamp.br/ojs/index.php/bjos/api/v1/issues
+      status: 403
+    - url: https://api.dac.unicamp.br/
+      status: 403
+    - url: https://api.unicamp.br/
+      status: 404
+    - url: https://api.datacite.org/providers/unicamp
+      status: 200
+    - url: https://api.crossref.org/members/27633
+      status: 200
+    - url: https://api.ror.org/v2/organizations/04wffgt70
+      status: 200
+    - url: https://www.unicamp.br/llms.txt
+      status: 404
+    - url: https://www.unicamp.br/.well-known/security.txt
+      status: 404
+    - url: https://repositorio.unicamp.br/
+      status: 503
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
