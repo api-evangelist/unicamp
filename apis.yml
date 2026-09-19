@@ -125,6 +125,11 @@ apis:
   tags:
   - Identity
   - OpenID Connect
+  - Authentication
+  - Keycloak
+  tags_raw:
+  - Identity
+  - OpenID Connect
   - OAuth 2.0
   - Keycloak
   properties:
@@ -148,6 +153,12 @@ apis:
   humanURL: https://www.rnp.br/servicos/servicos-por-categoria/gestao-de-identidade/cafe
   baseURL: https://cafe.unicamp.br/idp
   tags:
+  - Identity Federation
+  - Shibboleth
+  - SAML
+  - eduGAIN
+  - Cafe
+  tags_raw:
   - Identity Federation
   - Shibboleth
   - SAML
@@ -216,6 +227,11 @@ apis:
   humanURL: https://www.unicamp.br/
   baseURL: https://api.unicamp.br
   tags:
+  - Gateways
+  - API Management
+  - Sensedia
+  - Closed
+  tags_raw:
   - Gateway
   - API Management
   - Sensedia
