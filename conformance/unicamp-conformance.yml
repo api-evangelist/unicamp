@@ -1,0 +1,95 @@
+generated: '2026-09-01'
+method: probed
+source: >-
+  Live probes of Unicamp-operated hosts on 2026-09-01, plus the CAFe federation metadata
+  aggregate and the DataCite / Crossref / ROR public APIs.
+note: >-
+  Conformance against the Kin Score `education` regime standards[]. Every `conforms: true` below
+  points at a URL that was fetched and its status code recorded on 2026-09-01. Standards with no
+  evidence are recorded as false rather than left out, so the absence is legible. No conformance
+  is asserted from a prose claim on a web page.
+x-operator: institution
+standards:
+- id: oai-pmh
+  conforms: true
+  evidence: >-
+    Two independent institution-hosted OAI-PMH 2.0 endpoints. (1) REDU, the Unicamp research data
+    repository: https://redu.unicamp.br/oai?verb=Identify returns 200 with repositoryName
+    "Repositorio de Dados de Pesquisa da Unicamp Dataverse OAI Archive" and baseURL
+    https://redu.unicamp.br/oai. (2) The SBU journal portal, per journal:
+    https://periodicos.sbu.unicamp.br/ojs/index.php/bjos/oai?verb=Identify returns 200, and
+    verb=ListMetadataFormats returns 200 (1,729 bytes).
+- id: shibboleth
+  conforms: true
+  evidence: >-
+    Unicamp operates its own Shibboleth IdP, entityID https://cafe.unicamp.br/idp/shibboleth,
+    registered in CAFe (RNP's Brazilian academic identity federation, an eduGAIN participant).
+    The entity is present in https://ds.cafe.rnp.br/metadata/cafe-metadata.xml (200, 3,338,711
+    bytes) with OrganizationDisplayName "UNICAMP - Universidade Estadual de Campinas",
+    shibmd:Scope unicamp.br, and technical contact suporte-infra@detic.unicamp.br. The IdP
+    self-serves its metadata: GET https://cafe.unicamp.br/idp/shibboleth returns 200 with a SAML
+    2.0 EntityDescriptor.
+- id: saml
+  conforms: true
+  evidence: >-
+    SAML 2.0 SingleSignOnService endpoints published in the same metadata - HTTP-Redirect
+    https://cafe.unicamp.br/idp/profile/SAML2/Redirect/SSO, HTTP-POST
+    /idp/profile/SAML2/POST/SSO, POST-SimpleSign, plus SAML1/SAML2 ArtifactResolution on :8443.
+    Two Unicamp SAML service providers are also registered in CAFe
+    (https://cloudstack.pocnuvem.ccuec.unicamp.br/client/ and
+    https://solidariedade.unicamp.br/shibboleth-sp2).
+- id: datacite
+  conforms: true
+  evidence: >-
+    Unicamp is a DataCite provider in its own right, not only a client: GET
+    https://api.datacite.org/providers/unicamp returns 200 with name "University of Campinas",
+    symbol UNICAMP, memberType consortium_organization, rorId https://ror.org/04wffgt70. Its
+    repository client GDCC.UNICAMP (https://api.datacite.org/clients/gdcc.unicamp, 200, created
+    2019) has url https://redu.unicamp.br, and prefix 10.25824
+    (https://api.datacite.org/prefixes/10.25824, 200) resolves to that client. REDU datasets mint
+    DOIs under doi:10.25824/redu/.
+- id: crossref
+  conforms: true
+  evidence: >-
+    Crossref member 27633, "Universidade Estadual de Campinas" -
+    https://api.crossref.org/members/27633 returns 200; 13,018 DOIs registered (2,723 current,
+    10,295 backfile) as of 2026-09-01.
+- id: orcid
+  conforms: false
+  evidence: >-
+    No ORCID identifier was observed in REDU dataset metadata (/api/search sample) or in the SBU
+    OJS oai_dc records sampled on 2026-09-01. Unicamp may still collect ORCIDs behind
+    authentication; no public evidence was found, so this is recorded false rather than assumed.
+- id: scim
+  conforms: false
+  evidence: No SCIM endpoint found on any Unicamp host; no /scim/v2 route on api.unicamp.br or api.dados.unicamp.br.
+- id: lti
+  conforms: false
+  evidence: >-
+    Unicamp runs Moodle-based e-learning through GGTE (ea.unicamp.br), but no LTI platform or
+    tool registration surface is publicly reachable - ea.unicamp.br 302s to an authenticated app.
+- id: oneroster
+  conforms: false
+  evidence: No IMS OneRoster endpoint found; the registrar API host api.dac.unicamp.br returns 403 to every path probed.
+- id: ed-fi
+  conforms: false
+  evidence: Ed-Fi is a US K-12 standard; no Ed-Fi surface found and none expected for a Brazilian state university.
+- id: caliper
+  conforms: false
+  evidence: No IMS Caliper analytics endpoint found on any Unicamp host.
+- id: qti
+  conforms: false
+  evidence: No QTI assessment surface found on any publicly reachable Unicamp host.
+other:
+- id: openid-connect-discovery
+  conforms: true
+  evidence: >-
+    https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration returns 200
+    (6,717 bytes) from Unicamp's own Keycloak realm - full OIDC discovery including jwks_uri,
+    PKCE S256, device authorization and dynamic client registration.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: https://www.unicamp.br/.well-known/security.txt returns the site 404 page.
+- id: llms-txt
+  conforms: false
+  evidence: https://www.unicamp.br/llms.txt returns the site 404 page (soft body, 404 status).

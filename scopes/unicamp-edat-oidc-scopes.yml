@@ -1,0 +1,49 @@
+generated: '2026-09-01'
+method: probed
+source: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+note: >-
+  scopes_supported as advertised by Unicamp's EDAT Keycloak realm on 2026-09-01. Institution
+  specific scopes (uecEmailAccount, department_number, minio-authorization) are Unicamp's own
+  realm configuration, not Keycloak defaults. Scope semantics are not documented publicly; the
+  descriptions below are read from the scope names and are marked as such.
+x-operator: institution
+scopes:
+- name: openid
+  description: Standard OIDC scope; required for an id_token.
+  method: derived
+- name: profile
+  description: Standard OIDC profile claims.
+  method: derived
+- name: phone
+  description: Standard OIDC phone claim.
+  method: derived
+- name: basic
+  description: Keycloak basic scope (sub, auth_time).
+  method: derived
+- name: acr
+  description: Authentication context class reference.
+  method: derived
+- name: groups
+  description: Group membership claims.
+  method: derived
+- name: uecEmailAccount
+  description: Unicamp (UEC) institutional email account claim - realm-specific.
+  method: derived
+- name: department_number
+  description: Unicamp organisational unit / department number claim - realm-specific.
+  method: derived
+- name: minio-authorization
+  description: Authorization claims for the EDAT MinIO object store - realm-specific.
+  method: derived
+- name: service_account
+  description: Service-account (client_credentials) scope.
+  method: derived
+- name: Audience
+  description: Audience claim mapper - realm-specific.
+  method: derived
+- name: id
+  description: Identifier claim - realm-specific.
+  method: derived
+- name: type
+  description: Account type claim - realm-specific.
+  method: derived

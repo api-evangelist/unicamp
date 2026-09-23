@@ -1,0 +1,22 @@
+{
+  "provider": "unicamp",
+  "sources": [
+    "_original/unicamp-edat-data-api-openapi.yml"
+  ],
+  "outputs": [
+    "unicamp-authorization-api-openapi.yml",
+    "unicamp-support-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "unicamp-edat-data-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "unicamp-authorization-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unicamp-support-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

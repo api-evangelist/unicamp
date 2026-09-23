@@ -1,0 +1,61 @@
+generated: '2026-09-01'
+method: probed
+source: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+note: >-
+  Read directly from Unicamp's own OpenID Connect discovery document (HTTP 200, 6,717 bytes,
+  probed 2026-09-01). The authorization server is a Keycloak deployment operated by Unicamp on
+  its own registrable domain and is the credential authority for the EDAT data platform
+  (catalogo.dados.unicamp.br, apoio.dados.unicamp.br, api.dados.unicamp.br). It is separate from
+  Unicamp's SAML/Shibboleth identity provider registered in the CAFe federation.
+x-operator: institution
+summary:
+  types:
+  - openIdConnect
+  - oauth2
+issuer: https://seguranca.dados.unicamp.br/realms/edat
+discovery: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+endpoints:
+  authorization: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/auth
+  token: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/token
+  userinfo: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/userinfo
+  jwks: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/certs
+  introspection: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/token/introspect
+  revocation: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/revoke
+  end_session: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/logout
+  device_authorization: https://seguranca.dados.unicamp.br/realms/edat/protocol/openid-connect/auth/device
+  dynamic_client_registration: https://seguranca.dados.unicamp.br/realms/edat/clients-registrations/openid-connect
+schemes:
+- name: edatOidc
+  type: openIdConnect
+  description: >-
+    OIDC authorization-code flow with PKCE (S256 offered). Declared as DEFAULT_AUTH_URL in the
+    catalogo.dados.unicamp.br runtime config and enforced on api.dados.unicamp.br - an
+    unauthenticated GET of /suporte/public/sistemas returns 401 {"message":"Unauthorized"}.
+  sources:
+  - https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+  - https://catalogo.dados.unicamp.br/env.js
+grant_types:
+- authorization_code
+- client_credentials
+- implicit
+- password
+- refresh_token
+- urn:ietf:params:oauth:grant-type:device_code
+- urn:ietf:params:oauth:grant-type:token-exchange
+- urn:ietf:params:oauth:grant-type:uma-ticket
+- urn:openid:params:grant-type:ciba
+token_endpoint_auth_methods:
+- private_key_jwt
+- client_secret_basic
+- client_secret_post
+- tls_client_auth
+- client_secret_jwt
+pkce_methods:
+- S256
+- plain
+id_token_signing_algs:
+- RS256
+- ES256
+- PS256
+- EdDSA
+- HS256

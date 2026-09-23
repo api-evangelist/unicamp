@@ -1,0 +1,48 @@
+openapi: 3.2.0
+info:
+  title: Unicamp EDAT Data Platform Support API
+  version: '1.0'
+  description: Institution-operated API gateway for the Escritorio de Dados e Apoio a Tomada de Decisao (EDAT) of the Universidade Estadual de Campinas (Unicamp).
+  contact:
+    name: Escritorio de Dados e Apoio a Tomada de Decisao (EDAT) - Unicamp
+    url: https://www.dados.unicamp.br/fale-com-o-edat/
+  x-generated: '2026-09-01'
+  x-method: probed
+  x-source: https://api.dados.unicamp.br/superset/public/papeis (200, application/json, 55,697 bytes); https://api.dados.unicamp.br/suporte/public/sistemas (401); https://catalogo.dados.unicamp.br/env.js (route names + DEFAULT_BASE_URL/DEFAULT_AUTH_URL). Reconstructed by API Evangelist on 2026-09-01. Unicamp publishes no OpenAPI for this gateway.
+  x-operator: institution
+servers:
+- url: https://api.dados.unicamp.br
+  description: EDAT API gateway (Kong), unicamp.br registrable domain
+security:
+- edatOidc: []
+tags:
+- name: Support
+  description: Support desk system registry.
+paths:
+  /suporte/public/sistemas:
+    get:
+      tags:
+      - Support
+      summary: List systems registered with the EDAT support desk
+      operationId: listSupportSystems
+      description: 'Verified live 2026-09-01: HTTP 401 {"message":"Unauthorized"} with no credential, so the route exists and is gated despite the "public" path segment. The success response shape is unknown and is not described here.'
+      responses:
+        '401':
+          description: No or invalid bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized
+  securitySchemes:
+    edatOidc:
+      type: openIdConnect
+      openIdConnectUrl: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+      description: Unicamp-operated Keycloak realm `edat`. Declared as DEFAULT_AUTH_URL in the catalogo.dados.unicamp.br runtime configuration (/env.js) and confirmed by the 401 above.

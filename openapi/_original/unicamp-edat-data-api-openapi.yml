@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: Unicamp EDAT Data Platform API
+  version: '1.0'
+  description: >-
+    Institution-operated API gateway for the Escritorio de Dados e Apoio a Tomada de Decisao
+    (EDAT) of the Universidade Estadual de Campinas (Unicamp). It fronts the EDAT data products
+    surfaced through catalogo.dados.unicamp.br and apoio.dados.unicamp.br, and is protected by
+    Unicamp's own Keycloak realm at seguranca.dados.unicamp.br/realms/edat.
+
+    PROVENANCE NOTE: Unicamp publishes no OpenAPI for this gateway. This document was
+    reconstructed by API Evangelist from live probes of api.dados.unicamp.br on 2026-09-01 plus
+    the route names shipped in the catalogo.dados.unicamp.br front-end bundle. Only operations
+    that were actually called and observed are described here; the gateway certainly routes more
+    than this and those routes are deliberately not guessed at. Unicamp did not author this file.
+  contact:
+    name: Escritorio de Dados e Apoio a Tomada de Decisao (EDAT) - Unicamp
+    url: https://www.dados.unicamp.br/fale-com-o-edat/
+  x-generated: '2026-09-01'
+  x-method: probed
+  x-source: >-
+    https://api.dados.unicamp.br/superset/public/papeis (200, application/json, 55,697 bytes);
+    https://api.dados.unicamp.br/suporte/public/sistemas (401);
+    https://catalogo.dados.unicamp.br/env.js (route names + DEFAULT_BASE_URL/DEFAULT_AUTH_URL).
+    Reconstructed by API Evangelist on 2026-09-01. Unicamp publishes no OpenAPI for this gateway.
+  x-operator: institution
+servers:
+  - url: https://api.dados.unicamp.br
+    description: EDAT API gateway (Kong), unicamp.br registrable domain
+tags:
+  - name: Authorization
+    description: Role and permission metadata backing the EDAT Superset dashboards.
+  - name: Support
+    description: Support desk system registry.
+paths:
+  /superset/public/papeis:
+    get:
+      tags: [ Authorization ]
+      summary: List EDAT Superset roles
+      operationId: listSupersetRoles
+      description: >-
+        Returns the role/permission catalog behind the EDAT decision-support dashboards -
+        institutional evaluation indicators, budget lines, staffing, student permanence and
+        similar. Verified live 2026-09-01: HTTP 200, application/json, 364 objects, 55,697 bytes.
+        No credential was sent.
+      security: []
+      responses:
+        '200':
+          description: Array of role objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Papel'
+  /suporte/public/sistemas:
+    get:
+      tags: [ Support ]
+      summary: List systems registered with the EDAT support desk
+      operationId: listSupportSystems
+      description: >-
+        Verified live 2026-09-01: HTTP 401 {"message":"Unauthorized"} with no credential, so the
+        route exists and is gated despite the "public" path segment. The success response shape
+        is unknown and is not described here.
+      responses:
+        '401':
+          description: No or invalid bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    edatOidc:
+      type: openIdConnect
+      openIdConnectUrl: https://seguranca.dados.unicamp.br/realms/edat/.well-known/openid-configuration
+      description: >-
+        Unicamp-operated Keycloak realm `edat`. Declared as DEFAULT_AUTH_URL in the
+        catalogo.dados.unicamp.br runtime configuration (/env.js) and confirmed by the 401 above.
+  schemas:
+    Papel:
+      type: object
+      description: A role or permission exposed to the EDAT dashboards.
+      properties:
+        name:
+          type: string
+          example: ai.permissao.administrador
+        description:
+          type: string
+          example: Permissao de Administrador do Sistema de Avaliacao Interna
+        attributes:
+          type: object
+          description: Free-form attribute bag; `alias` is the only key observed.
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized
+security:
+  - edatOidc: []
